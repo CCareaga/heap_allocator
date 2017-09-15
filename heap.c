@@ -1,6 +1,6 @@
 #include "include/heap.h"
 
-uint32_t offset = sizeof(node_t) - 8;
+uint32_t offset = 8;
 
 void init_heap(heap_t *heap, uint32_t start, uint32_t end, uint32_t max) {
     node_t *init_region = (node_t *) start;
@@ -27,7 +27,7 @@ void *alloc(heap_t *heap, size_t size) {
         found = get_best_fit(temp, size);
     }
 
-    if ((found->size - size) > 4) {
+    if ((found->size - size) > (overhead + 4)) {
         node_t *split = ((char *) found + sizeof(node_t) + sizeof(footer_t)) + size; 
         split->size = found->size - size - sizeof(node_t) - sizeof(footer_t);
         split->hole = 1;
@@ -79,7 +79,7 @@ void free(heap_t *heap, void *p) {
         list = heap->bins[get_bin_index(prev->size)];
         remove_node(list, prev);
 
-        prev->size += sizeof(footer_t) + sizeof(node_t) + head->size;
+        prev->size += overhead + head->size;
         new_foot = get_foot(head);
         new_foot->header = prev;
 
@@ -90,7 +90,7 @@ void free(heap_t *heap, void *p) {
         list = heap->bins[get_bin_index(next->size)];
         remove_node(list, next);
 
-        head->size += sizeof(node_t) + next->size;
+        head->size += overhead + next->size;
 
         old_foot = get_foot(next);
         old_foot->header = 0;
@@ -120,7 +120,7 @@ uint32_t get_bin_index(size_t sz) {
     while (sz >>= 1) index++; 
     index -= 2; 
     
-    if (index > 8) index = 8; 
+    if (index > BIN_MAX_IDX) index = BIN_MAX_IDX; 
     return index;
 }
 

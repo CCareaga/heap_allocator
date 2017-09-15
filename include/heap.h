@@ -13,6 +13,7 @@
 #define MAX_WILDERNESS 0x1000000
 
 #define BIN_COUNT 9
+#define BIN_MAX_IDX (BIN_COUNT - 1)
 
 typedef struct node_t {
     uint32_t hole;
@@ -36,6 +37,8 @@ typedef struct {
     uint32_t max;
     bin_t *bins[BIN_COUNT];
 } heap_t;
+
+static uint32_t overhead = sizeof(footer_t) + sizeof(node_t);
 
 void init_heap(heap_t *heap, uint32_t start, uint32_t end, uint32_t max);
 
