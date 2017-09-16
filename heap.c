@@ -2,22 +2,20 @@
 
 uint32_t offset = 8;
 
-void init_heap(heap_t *heap, uint32_t start, uint32_t end, uint32_t max) {
+void init_heap(heap_t *heap, uint32_t start) {
     node_t *init_region = (node_t *) start;
     init_region->hole = 1;
-    init_region->size = (end - start) - sizeof(node_t) - sizeof(footer_t);
+    init_region->size = (HEAP_INIT_SIZE) - sizeof(node_t) - sizeof(footer_t);
 
     create_foot(init_region);
 
     add_node(heap->bins[get_bin_index(init_region->size)], init_region);
 
     heap->start = start;
-    heap->end = end;
-    heap->max = max;
+    heap->end = start + HEAP_INIT_SIZE;
 }
 
-void *alloc(heap_t *heap, size_t size) {
-
+void *heap_alloc(heap_t *heap, size_t size) {
     uint32_t index = get_bin_index(size);
     bin_t *temp = (bin_t *) heap->bins[index];
     node_t *found = get_best_fit(temp, size);
@@ -27,7 +25,7 @@ void *alloc(heap_t *heap, size_t size) {
         found = get_best_fit(temp, size);
     }
 
-    if ((found->size - size) > (overhead + 4)) {
+    if ((found->size - size) > (overhead + MIN_ALLOC_SZ)) {
         node_t *split = ((char *) found + sizeof(node_t) + sizeof(footer_t)) + size; 
         split->size = found->size - size - sizeof(node_t) - sizeof(footer_t);
         split->hole = 1;
@@ -61,7 +59,7 @@ void *alloc(heap_t *heap, size_t size) {
     return &found->next; 
 }
 
-void free(heap_t *heap, void *p) {
+void heap_free(heap_t *heap, void *p) {
     bin_t *list;
     footer_t *new_foot, *old_foot;
 

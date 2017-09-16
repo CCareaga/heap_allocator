@@ -1,5 +1,6 @@
 #include "include/heap.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc, char** argv) {
     heap_t *heap = malloc(sizeof(heap_t));
@@ -9,41 +10,42 @@ int main(int argc, char** argv) {
         heap->bins[i] = malloc(sizeof(bin_t));
     }
 
-    init_heap(heap, region, region + HEAP_INIT_SIZE, HEAP_MAX_SIZE);
+    init_heap(heap, (uint32_t) region);
     
     printf("overhead = %d \n", overhead);
 
-    void *a = alloc(heap, 8);
-    printf("a = %d size: 8 \n", a);
-    void *b = alloc(heap, 128);
-    printf("b = %d size: 128 \n", b);
-    void *c = alloc(heap, 8);
-    printf("c = %d size: 8 \n", c);
+    void *a = heap_alloc(heap, 8);
+    printf("a = %d size: 8 \n", (int) a);
+    void *b = heap_alloc(heap, 128);
+    printf("b = %d size: 128 \n", (int) b);
+    void *c = heap_alloc(heap, 8);
+    printf("c = %d size: 8 \n", (int) c);
 
     printf("\nfreeing b \n");
-    free(heap, b);
+    heap_free(heap, b);
 
-    void* d = alloc(heap, 16);
-    printf("d = %d size: 4 \n", d);
+    void* d = heap_alloc(heap, 8);
+    printf("d = %d size: 8 \n", (int) d);
 
-    void* e = alloc(heap, 8);
-    printf("e = %d size: 4 \n", e);
+    void* e = heap_alloc(heap, 16);
+    printf("e = %d size: 16 \n", (int) e);
     
-    void* f = alloc(heap, 16);
-    printf("f = %d size: 4 \n", f);
+    void* f = heap_alloc(heap, 8);
+    printf("f = %d size: 8 \n", (int) f);
 
-    void* g = alloc(heap, 8);
-    printf("g = %d size: 8 \n", g);
+    void* g = heap_alloc(heap, 8);
+    printf("g = %d size: 8 \n", (int) g);
 
     printf("\nfreeing d & f \n");
-    free(heap, d);
-    free(heap, f);
+    heap_free(heap, d);
+    heap_free(heap, f);
     
     printf("\nfreeing e\n");
-    free(heap, e);
+    heap_free(heap, e);
 
-    void* h = alloc(heap, 128);
-    printf("h = %d size: 128 \n", h);
+    void* h = heap_alloc(heap, 128);
+    printf("h = %d size: 128 \n", (int) h);
+    printf("\n");
 
     int i;
     for (i = 1; i <= 2048; i += i) printf("size: %d -> bin: %d \n", i, get_bin_index(i));
