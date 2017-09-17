@@ -172,7 +172,7 @@ void contract(heap_t *heap, size_t sz) {
 // ========================================================
 // this function is the hashing function that converts
 // size => bin index. changing this function will change 
-// the binning policy of the heap. reight now it just 
+// the binning policy of the heap. right now it just 
 // places any allocation < 8 in bin 0 and then for anything
 // above 8 it bins using the log base 2 of the size
 // ========================================================
