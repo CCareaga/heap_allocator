@@ -53,5 +53,5 @@ The function ```heap_free``` takes a pointer returned by ```heap_alloc```. It su
 ------------
 * [Doug Lea's Memory Allocator](http://g.oswego.edu/dl/html/malloc.html)
 
-NOTE: you may notice that all of the variables are very size specific (this may cuase a alot warnings from your compiler)
+NOTE: you may notice that all of the variables are very size specific (this may cause a alot warnings from your compiler)
 this is because this code is originally from a hobby OS. it is important that all structures are a predicatable size in order for certain calculations to work in the code. There are various areas where if the math is off a couple bytes, everything may stop working!
