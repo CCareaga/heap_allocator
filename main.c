@@ -3,10 +3,11 @@
 #include <stdlib.h>
 
 int main(int argc, char** argv) {
+    int i;
     heap_t *heap = malloc(sizeof(heap_t));
     void *region = malloc(HEAP_INIT_SIZE);
     
-    for (int i = 0; i < BIN_COUNT; i++) {
+    for (i = 0; i < BIN_COUNT; i++) {
         heap->bins[i] = malloc(sizeof(bin_t));
     }
 
@@ -47,6 +48,5 @@ int main(int argc, char** argv) {
     printf("h = %d size: 128 \n", (int) h);
     printf("\n");
 
-    int i;
     for (i = 1; i <= 2048; i += i) printf("size: %d -> bin: %d \n", i, get_bin_index(i));
 }

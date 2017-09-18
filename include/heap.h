@@ -16,9 +16,11 @@
 #define BIN_COUNT 9
 #define BIN_MAX_IDX (BIN_COUNT - 1)
 
+typedef unsigned int uint;
+
 typedef struct node_t {
-    uint8_t hole;
-    uint32_t size;
+    uint hole;
+    uint size;
     struct node_t* next;
     struct node_t* prev;
 } node_t;
@@ -32,21 +34,21 @@ typedef struct {
 } bin_t;
 
 typedef struct {
-    uint32_t start;
-    uint32_t end;
+    uint start;
+    uint end;
     bin_t *bins[BIN_COUNT];
 } heap_t;
 
-static uint32_t overhead = sizeof(footer_t) + sizeof(node_t);
+static uint overhead = sizeof(footer_t) + sizeof(node_t);
 
-void init_heap(heap_t *heap, uint32_t start);
+void init_heap(heap_t *heap, uint start);
 
 void *heap_alloc(heap_t *heap, size_t size);
 void heap_free(heap_t *heap, void *p);
-uint8_t expand(heap_t *heap, size_t sz);
+uint expand(heap_t *heap, size_t sz);
 void contract(heap_t *heap, size_t sz);
 
-uint32_t get_bin_index(size_t sz);
+uint get_bin_index(size_t sz);
 void create_foot(node_t *head);
 footer_t *get_foot(node_t *head);
 

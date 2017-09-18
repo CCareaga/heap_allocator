@@ -65,7 +65,7 @@ void remove_node(bin_t * bin, node_t *node) {
     }
 }
 
-node_t *get_best_fit(bin_t *bin, uint32_t size) {
+node_t *get_best_fit(bin_t *bin, size_t size) {
     if (bin->head == NULL) return NULL; // empty list!
 
     node_t *temp = bin->head;

@@ -1,6 +1,6 @@
 #include "include/heap.h"
 
-uint32_t offset = sizeof(uint32_t) * 2;
+int offset = sizeof(int) * 2;
 
 // ========================================================
 // this function initializes a new heap structure, provided
@@ -10,7 +10,7 @@ uint32_t offset = sizeof(uint32_t) * 2;
 // how large the heap is so make sure the same constant
 // is used when allocating memory for your heap!
 // ========================================================
-void init_heap(heap_t *heap, uint32_t start) {
+void init_heap(heap_t *heap, int start) {
     // first we create the initial region, this is the "wilderness" chunk
     // the heap starts as just one big chunk of allocatable memory
     node_t *init_region = (node_t *) start;
@@ -35,7 +35,7 @@ void init_heap(heap_t *heap, uint32_t start) {
 // ========================================================
 void *heap_alloc(heap_t *heap, size_t size) {
     // first get the bin index that this chunk size should be in
-    uint32_t index = get_bin_index(size);
+    int index = get_bin_index(size);
     // now use this bin to try and find a good fitting chunk!
     bin_t *temp = (bin_t *) heap->bins[index];
     node_t *found = get_best_fit(temp, size);
@@ -60,7 +60,7 @@ void *heap_alloc(heap_t *heap, size_t size) {
     
         // now we need to get the new index for this split chunk
         // place it in the correct bin
-        uint32_t new_idx = get_bin_index(split->size); 
+        int new_idx = get_bin_index(split->size); 
         add_node(heap->bins[new_idx], split); 
     
         found->size = size; // set the found chunks size
@@ -75,7 +75,7 @@ void *heap_alloc(heap_t *heap, size_t size) {
     // ==========================================
     node_t *wild = get_wilderness(heap);
     if (wild->size < MIN_WILDERNESS) {
-        uint8_t success = expand(heap, 0x1000);
+        int success = expand(heap, 0x1000);
         if (success == 0) {
             return NULL;
         }
@@ -119,7 +119,7 @@ void heap_free(heap_t *heap, void *p) {
     // to get the footer of the previous node (which gives us the header pointer). 
     // to get the next node we simply get the footer and add the sizeof(footer_t).
     node_t *next = (node_t *) ((char *) get_foot(head) + sizeof(footer_t));
-    node_t *prev = (node_t *) * ((uint32_t *) ((char *) head - sizeof(footer_t)));
+    node_t *prev = (node_t *) * ((int *) ((char *) head - sizeof(footer_t)));
     
     // if the previous node is a hole we can coalese!
     if (prev->hole) {
@@ -162,7 +162,7 @@ void heap_free(heap_t *heap, void *p) {
 }
 
 // these are left here to implement contraction / expansion
-uint8_t expand(heap_t *heap, size_t sz) {
+int expand(heap_t *heap, size_t sz) {
 
 }
 
@@ -176,8 +176,8 @@ void contract(heap_t *heap, size_t sz) {
 // places any allocation < 8 in bin 0 and then for anything
 // above 8 it bins using the log base 2 of the size
 // ========================================================
-uint32_t get_bin_index(size_t sz) {
-    uint32_t index = 0;
+int get_bin_index(size_t sz) {
+    int index = 0;
     sz = sz < 4 ? 4 : sz;
 
     while (sz >>= 1) index++; 

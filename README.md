@@ -53,5 +53,4 @@ The function ```heap_free``` takes a pointer returned by ```heap_alloc```. It su
 ------------
 * [Doug Lea's Memory Allocator](http://g.oswego.edu/dl/html/malloc.html)
 
-NOTE: you may notice that all of the variables are very size specific (this may cause a alot warnings from your compiler)
-this is because this code is originally from a hobby OS. it is important that all structures are a predicatable size in order for certain calculations to work in the code. There are various areas where if the math is off a couple bytes, everything may stop working!
+NOTE: This code was originally compiled for 32-bit machine, this means that when this code was used it was acceptable to cast an int to a pointer due to the fact they are both the same size. On a 64-bit system the compiler will warn you of the size difference. To silence these warnings I have used the ```uintptr_t``` when casting from an unsigned int to a pointer. This does muddy the readability a bit and some of the casts and pointer arithmetic are verbose so bear that in mind when reading the code.  
