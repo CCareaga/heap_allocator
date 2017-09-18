@@ -40,7 +40,7 @@ The function ```heap_alloc``` takes the address of the heap struct to allocate f
 The function ```heap_free``` takes a pointer returned by ```heap_alloc```. It subtracts the correct offset in order to get the address of the node struct. Instead of simply placing the chunk into the correct bin, the chunks surrounding the provided chunk are checked. If either of these chunks are free then we can coalesce the chunks in order to create a larger chunk. To colaesce the chunks the footer is used to get the node struct of the previous chunk and the node struct of the next chunk. For example, say we have a chunk called ```to_free```. To get the the chunk before this chunk we subtract ```sizeof(footer_t)``` to get the footer of the previous chunk. The footer holds a pointer to the head of the previous chunk. To get the next chunk we simply get the footer of ```to_free``` and then add ```sizeof(footer_t)``` in order to get the next chunk. Once all of this is done and sizes are re-calculated the chunk is placed back into a bin.
 
 
-### Possible Improvments
+### Possible Improvements
 ------------
   - Error-Checking - check for heap corruption, double-free, etc.
   - Improve binning policy.
