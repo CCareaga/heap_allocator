@@ -1,17 +1,22 @@
 #include "include/heap.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 int main(int argc, char** argv) {
     int i;
+
     heap_t *heap = malloc(sizeof(heap_t));
+
     void *region = malloc(HEAP_INIT_SIZE);
+    memset(region, 0, HEAP_INIT_SIZE);
     
     for (i = 0; i < BIN_COUNT; i++) {
         heap->bins[i] = malloc(sizeof(bin_t));
+        memset(heap->bins[i], 0, sizeof(bin_t));
     }
 
-    init_heap(heap, (uint32_t) region);
+    init_heap(heap, (uint) region);
     
     printf("overhead = %d \n", overhead);
 
@@ -49,4 +54,11 @@ int main(int argc, char** argv) {
     printf("\n");
 
     for (i = 1; i <= 2048; i += i) printf("size: %d -> bin: %d \n", i, get_bin_index(i));
+
+    for (i = 0; i < BIN_COUNT; i++) {
+        free(heap->bins[i]);
+    }
+
+    free(heap);
+    free(region);
 }
