@@ -7,6 +7,7 @@ int main(int argc, char** argv) {
     int i;
 
     heap_t *heap = malloc(sizeof(heap_t));
+    memset(heap, 0, sizeof(heap_t));
 
     void *region = malloc(HEAP_INIT_SIZE);
     memset(region, 0, HEAP_INIT_SIZE);

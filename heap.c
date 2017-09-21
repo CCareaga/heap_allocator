@@ -105,11 +105,11 @@ void heap_free(heap_t *heap, void *p) {
 }
 
 uint expand(heap_t *heap, size_t sz) {
-
+    return 0;
 }
 
 void contract(heap_t *heap, size_t sz) {
-
+    return;
 }
 
 uint get_bin_index(size_t sz) {
@@ -133,6 +133,6 @@ footer_t *get_foot(node_t *node) {
 }
 
 node_t *get_wilderness(heap_t *heap) {
-    footer_t *wild_foot = (footer_t *) (uintptr_t) ((char *) heap->end - sizeof(footer_t));
+    footer_t *wild_foot = (footer_t *) ((char *) (uintptr_t) heap->end - sizeof(footer_t));
     return wild_foot->header;
 }
