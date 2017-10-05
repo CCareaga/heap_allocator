@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
         memset(heap->bins[i], 0, sizeof(bin_t));
     }
 
-    init_heap(heap, (uint) region);
+    init_heap(heap, (long) region);
     
     printf("overhead = %d \n", overhead);
 

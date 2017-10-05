@@ -34,14 +34,14 @@ typedef struct {
 } bin_t;
 
 typedef struct {
-    uint start;
-    uint end;
+    long start;
+    long end;
     bin_t *bins[BIN_COUNT];
 } heap_t;
 
 static uint overhead = sizeof(footer_t) + sizeof(node_t);
 
-void init_heap(heap_t *heap, uint start);
+void init_heap(heap_t *heap, long start);
 
 void *heap_alloc(heap_t *heap, size_t size);
 void heap_free(heap_t *heap, void *p);
