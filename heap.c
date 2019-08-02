@@ -22,6 +22,9 @@ void *heap_alloc(heap_t *heap, size_t size) {
     node_t *found = get_best_fit(temp, size);
 
     while (found == NULL) {
+        if (index + 1 >= BIN_COUNT)
+            return NULL;
+
         temp = heap->bins[++index];
         found = get_best_fit(temp, size);
     }
