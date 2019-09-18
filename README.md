@@ -1,6 +1,6 @@
 # SHMALL - Simple Heap Memory ALLocator
 ------------
-This is a simple heap allocator I wrote for a hobby OS I have been working on. I wrote this allocator with very little research, and it is made to be as easy to understand as possible. I think this repository can be useful to those who are new to OS development (like myself), or are interested in seeing a simplified version or functions like malloc and free.
+This is a simple heap allocator I wrote for a hobby OS I have been working on. I wrote this allocator with very little research, and it is made to be as easy to understand as possible. I think this repository can be useful to those who are new to OS development (like myself), or are interested in seeing a simplified version of functions like malloc and free.
 
 ---
 ![SHAMLL](SHMALL.png "SHMALL")
