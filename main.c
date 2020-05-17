@@ -22,26 +22,26 @@ int main(int argc, char** argv) {
     printf("overhead = %d \n", overhead);
 
     void *a = heap_alloc(heap, 8);
-    printf("a = %d size: 8 \n", (int) a);
+    printf("a = %p size: 8 \n", a);
     void *b = heap_alloc(heap, 128);
-    printf("b = %d size: 128 \n", (int) b);
+    printf("b = %p size: 128 \n", b);
     void *c = heap_alloc(heap, 8);
-    printf("c = %d size: 8 \n", (int) c);
+    printf("c = %p size: 8 \n", c);
 
     printf("\nfreeing b \n");
     heap_free(heap, b);
 
     void* d = heap_alloc(heap, 8);
-    printf("d = %d size: 8 \n", (int) d);
+    printf("d = %p size: 8 \n", d);
 
     void* e = heap_alloc(heap, 16);
-    printf("e = %d size: 16 \n", (int) e);
+    printf("e = %p size: 16 \n", e);
     
     void* f = heap_alloc(heap, 8);
-    printf("f = %d size: 8 \n", (int) f);
+    printf("f = %p size: 8 \n", f);
 
     void* g = heap_alloc(heap, 8);
-    printf("g = %d size: 8 \n", (int) g);
+    printf("g = %p size: 8 \n", g);
 
     printf("\nfreeing d & f \n");
     heap_free(heap, d);
@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
     heap_free(heap, e);
 
     void* h = heap_alloc(heap, 128);
-    printf("h = %d size: 128 \n", (int) h);
+    printf("h = %p size: 128 \n", h);
     printf("\n");
 
     for (i = 1; i <= 2048; i += i) printf("size: %d -> bin: %d \n", i, get_bin_index(i));

@@ -1,6 +1,6 @@
 #include "include/heap.h"
 
-int offset = sizeof(int) * 2;
+#define USER_POINTER_OFFSET     (2 * sizeof(int))
 
 // ========================================================
 // this function initializes a new heap structure, provided
@@ -10,7 +10,7 @@ int offset = sizeof(int) * 2;
 // how large the heap is so make sure the same constant
 // is used when allocating memory for your heap!
 // ========================================================
-void init_heap(heap_t *heap, int start) {
+void init_heap(heap_t *heap, long start) {
     // first we create the initial region, this is the "wilderness" chunk
     // the heap starts as just one big chunk of allocatable memory
     node_t *init_region = (node_t *) start;
@@ -34,11 +34,20 @@ void init_heap(heap_t *heap, int start) {
 // if neccesary and return the start of the chunk
 // ========================================================
 void *heap_alloc(heap_t *heap, size_t size) {
+    uint index      = 0;
+    bin_t *temp     = NULL;
+    node_t *found   = NULL;
+
+    // do alignment first
+    if (ALIGN_BTYES != 1) {
+        size = ((size + ALIGN_BTYES - 1) / ALIGN_BTYES) * ALIGN_BTYES;
+    }
+
     // first get the bin index that this chunk size should be in
-    int index = get_bin_index(size);
+    index   = get_bin_index(size);
     // now use this bin to try and find a good fitting chunk!
-    bin_t *temp = (bin_t *) heap->bins[index];
-    node_t *found = get_best_fit(temp, size);
+    temp    = (bin_t *) heap->bins[index];
+    found   = get_best_fit(temp, size);
     
     // while no chunk if found advance through the bins until we
     // find a chunk or get to the wilderness
@@ -103,29 +112,34 @@ void *heap_alloc(heap_t *heap, size_t size) {
 // coalesced  and then placed in the correct bin
 // ========================================================
 void heap_free(heap_t *heap, void *p) {
-    bin_t *list;
-    footer_t *new_foot, *old_foot;
+    bin_t *list         = NULL;
+    footer_t *new_foot  = NULL;
+    footer_t *old_foot  = NULL;
+    footer_t *f         = NULL;
+    node_t *prev        = NULL;
+    int has_next        = 0;
+    int has_prev        = 0;
     
     // the actual head of the node is not p, it is p minus the size
     // of the fields that precede "next" in the node structure
-    // if the node being free is the start of the heap then there is
-    // no need to coalesce so just put it in the right list
-    node_t *head = (node_t *) ((char *) p - offset);
-    if (head == heap->start) {
-        head->hole = 1; 
-        add_node(heap->bins[get_bin_index(head->size)], head);
-        return;
+    // if the node being free is the start of the heap, it would has
+    // no previous node to coalesce
+    node_t *head = (node_t *) ((char *) p - USER_POINTER_OFFSET);
+    if (head != (node_t *)(uintptr_t) heap->start) {
+        has_prev = 1;
+        f = (footer_t *) ((char *) head - sizeof(footer_t));
+        prev = f->header;
     }
     
-    // these are the next and previous nodes in the heap, not the prev and next
-    // in a bin. to find prev we just get subtract from the start of the head node
-    // to get the footer of the previous node (which gives us the header pointer). 
-    // to get the next node we simply get the footer and add the sizeof(footer_t).
+    // if the node being free is the end of the heap, it would has
+    // no next node to coalesce
     node_t *next = (node_t *) ((char *) get_foot(head) + sizeof(footer_t));
-    node_t *prev = (node_t *) * ((int *) ((char *) head - sizeof(footer_t)));
+    if (next != (node_t *) (uintptr_t)heap->end) {
+        has_next = 1;
+    }
     
-    // if the previous node is a hole we can coalese!
-    if (prev->hole) {
+    // if it has the previous node and the previous node is a hole we can coalese!
+    if (has_prev && prev->hole) {
         // remove the previous node from its bin
         list = heap->bins[get_bin_index(prev->size)];
         remove_node(list, prev);
@@ -140,8 +154,8 @@ void heap_free(heap_t *heap, void *p) {
         head = prev; 
     }
     
-    // if the next node is free coalesce!
-    if (next->hole) {
+    // if it has the next node and the next node is free coalesce!
+    if (has_next && next->hole) {
         // remove it from its bin
         list = heap->bins[get_bin_index(next->size)];
         remove_node(list, next);
@@ -165,7 +179,7 @@ void heap_free(heap_t *heap, void *p) {
 }
 
 // these are left here to implement contraction / expansion
-int expand(heap_t *heap, size_t sz) {
+uint expand(heap_t *heap, size_t sz) {
 
 }
 
@@ -179,7 +193,7 @@ void contract(heap_t *heap, size_t sz) {
 // places any allocation < 8 in bin 0 and then for anything
 // above 8 it bins using the log base 2 of the size
 // ========================================================
-int get_bin_index(size_t sz) {
+uint get_bin_index(size_t sz) {
     int index = 0;
     sz = sz < 4 ? 4 : sz;
 

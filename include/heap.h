@@ -16,6 +16,8 @@
 #define BIN_COUNT 9
 #define BIN_MAX_IDX (BIN_COUNT - 1)
 
+#define ALIGN_BTYES     sizeof(long)    /* alignment bytes */
+
 typedef unsigned int uint;
 
 typedef struct node_t {
@@ -49,6 +51,7 @@ uint expand(heap_t *heap, size_t sz);
 void contract(heap_t *heap, size_t sz);
 
 uint get_bin_index(size_t sz);
+node_t *get_best_fit(bin_t *bin, size_t size);
 void create_foot(node_t *head);
 footer_t *get_foot(node_t *head);
 

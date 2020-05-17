@@ -1,7 +1,7 @@
 #include "include/heap.h"
 #include "include/llist.h"
 
-uint offset = 8;
+#define USER_POINTER_OFFSET     (2 * sizeof(int))
 
 void init_heap(heap_t *heap, long start) {
     node_t *init_region = (node_t *) start;
@@ -17,9 +17,17 @@ void init_heap(heap_t *heap, long start) {
 }
 
 void *heap_alloc(heap_t *heap, size_t size) {
-    uint index = get_bin_index(size);
-    bin_t *temp = (bin_t *) heap->bins[index];
-    node_t *found = get_best_fit(temp, size);
+    uint index      = 0;
+    bin_t *temp     = NULL;
+    node_t *found   = NULL;
+
+    if (ALIGN_BTYES != 1) {
+        size = ((size + ALIGN_BTYES - 1) / ALIGN_BTYES) * ALIGN_BTYES;
+    }
+
+    index   = get_bin_index(size);
+    temp    = (bin_t *) heap->bins[index];
+    found   = get_best_fit(temp, size);
 
     while (found == NULL) {
         if (index + 1 >= BIN_COUNT)
@@ -64,21 +72,27 @@ void *heap_alloc(heap_t *heap, size_t size) {
 }
 
 void heap_free(heap_t *heap, void *p) {
-    bin_t *list;
-    footer_t *new_foot, *old_foot;
+    bin_t *list         = NULL;
+    footer_t *new_foot  = NULL;
+    footer_t *old_foot  = NULL;
+    footer_t *f         = NULL;
+    node_t *prev        = NULL;
+    int has_next        = 0;
+    int has_prev        = 0;
 
-    node_t *head = (node_t *) ((char *) p - offset);
-    if (head == (node_t *) (uintptr_t) heap->start) {
-        head->hole = 1; 
-        add_node(heap->bins[get_bin_index(head->size)], head);
-        return;
+    node_t *head = (node_t *) ((char *) p - USER_POINTER_OFFSET);
+    if (head != (node_t *)(uintptr_t) heap->start) {
+        has_prev = 1;
+        f = (footer_t *) ((char *) head - sizeof(footer_t));
+        prev = f->header;
     }
 
     node_t *next = (node_t *) ((char *) get_foot(head) + sizeof(footer_t));
-    footer_t *f = (footer_t *) ((char *) head - sizeof(footer_t));
-    node_t *prev = f->header;
+    if (next != (node_t *) (uintptr_t)heap->end) {
+        has_next = 1;
+    }
     
-    if (prev->hole) {
+    if (has_prev && prev->hole) {
         list = heap->bins[get_bin_index(prev->size)];
         remove_node(list, prev);
 
@@ -89,7 +103,7 @@ void heap_free(heap_t *heap, void *p) {
         head = prev;
     }
 
-    if (next->hole) {
+    if (has_next && next->hole) {
         list = heap->bins[get_bin_index(next->size)];
         remove_node(list, next);
 
