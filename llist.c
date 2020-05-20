@@ -4,8 +4,6 @@ void add_node(bin_t *bin, node_t* node) {
     node->next = NULL;
     node->prev = NULL;
 
-    node_t *temp = bin->head;
-
     if (bin->head == NULL) {
         bin->head = node;
         return;
