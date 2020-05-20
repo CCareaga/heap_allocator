@@ -39,7 +39,7 @@ typedef struct {
     bin_t *bins[BIN_COUNT];
 } heap_t;
 
-static uint overhead = sizeof(footer_t) + sizeof(node_t);
+static const uint overhead = sizeof(footer_t) + sizeof(node_t);
 
 void init_heap(heap_t *heap, long start);
 
