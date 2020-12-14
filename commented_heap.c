@@ -31,7 +31,7 @@ void init_heap(heap_t *heap, int start) {
 // the heap struct pointer and the size of the chunk we 
 // want. this function will search through the bins until 
 // it finds a suitable chunk. it will then split the chunk
-// if neccesary and return the start of the chunk
+// if necessary and return the start of the chunk
 // ========================================================
 void *heap_alloc(heap_t *heap, size_t size) {
     // first get the bin index that this chunk size should be in
